@@ -11,22 +11,93 @@ type Movie = {
   backdrop_path: string | null;
   genre_ids: number[];
 };
+type Genre = {
+  name: string;
+  id: number;
+};
 import useMovies from "../hooks/useMovies";
 export default function Movie() {
   const { movies, isLoading } = useMovies();
-  const genres: Record<number, string> = {
-    28: "Action",
-    12: "Adventure",
-    16: "Animation",
-    35: "Comedy",
-    18: "Drama",
-    27: "Horror",
-    10749: "Romance",
-    878: "Science Fiction",
-  };
+  const genres: Genre[] = [
+    {
+      id: 28,
+      name: "Action",
+    },
+    {
+      id: 12,
+      name: "Adventure",
+    },
+    {
+      id: 16,
+      name: "Animation",
+    },
+    {
+      id: 35,
+      name: "Comedy",
+    },
+    {
+      id: 80,
+      name: "Crime",
+    },
+    {
+      id: 99,
+      name: "Documentary",
+    },
+    {
+      id: 18,
+      name: "Drama",
+    },
+    {
+      id: 10751,
+      name: "Family",
+    },
+    {
+      id: 14,
+      name: "Fantasy",
+    },
+    {
+      id: 36,
+      name: "History",
+    },
+    {
+      id: 27,
+      name: "Horror",
+    },
+    {
+      id: 10402,
+      name: "Music",
+    },
+    {
+      id: 9648,
+      name: "Mystery",
+    },
+    {
+      id: 10749,
+      name: "Romance",
+    },
+    {
+      id: 878,
+      name: "Science Fiction",
+    },
+    {
+      id: 10770,
+      name: "TV Movie",
+    },
+    {
+      id: 53,
+      name: "Thriller",
+    },
+    {
+      id: 10752,
+      name: "War",
+    },
+    {
+      id: 37,
+      name: "Western",
+    },
+  ];
 
   if (isLoading) return <Spinner />;
- 
 
   return (
     <ul className="movies-container">
@@ -48,11 +119,11 @@ export default function Movie() {
             <h3 className="movie-title">{movie.title}</h3>
             <span>{movie.release_date}</span>
             <span>
-              {movie.genre_ids.map((genreId) => (
-                <span className="movie-genre" key={genreId}>
-                  {genres[genreId] ?? "Unknown genre"}
-                </span>
-              ))}
+              {movie.genre_ids.map((genreId) => {
+                const genre = genres.find((genre) => genre.id === genreId);
+
+                return <span className="movie-genre" key={genreId}>{genre?.name ?? "Unknown genre"}</span>;
+              })}
             </span>
             <div className="line-clamp-5">{movie.overview}</div>
           </div>
