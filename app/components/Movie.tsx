@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Spinner from "../components/LoadingSpinner";
+import { format } from "date-fns";
 
 type Movie = {
   id: number;
@@ -8,7 +9,6 @@ type Movie = {
   release_date: number;
   overview: string;
   poster_path: string | null;
-  backdrop_path: string | null;
   genre_ids: number[];
 };
 type Genre = {
@@ -18,6 +18,7 @@ type Genre = {
 import useMovies from "../hooks/useMovies";
 export default function Movie() {
   const { movies, isLoading } = useMovies();
+const date = format
   const genres: Genre[] = [
     {
       id: 28,
@@ -117,12 +118,16 @@ export default function Movie() {
 
           <div className="movie-options">
             <h3 className="movie-title">{movie.title}</h3>
-            <span>{movie.release_date}</span>
+            <span>{date(movie.release_date, 'MMMM dd, yyyy')}</span>
             <span>
               {movie.genre_ids.map((genreId) => {
                 const genre = genres.find((genre) => genre.id === genreId);
 
-                return <span className="movie-genre" key={genreId}>{genre?.name ?? "Unknown genre"}</span>;
+                return (
+                  <span className="movie-genre" key={genreId}>
+                    {genre?.name ?? "Unknown genre"}
+                  </span>
+                );
               })}
             </span>
             <div className="line-clamp-5">{movie.overview}</div>
