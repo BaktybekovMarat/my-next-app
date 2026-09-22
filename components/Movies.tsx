@@ -1,12 +1,16 @@
 "use client";
 import Image from "next/image";
-import Spinner from "../components/LoadingSpinner";
+import Spinner from "./LoadingSpinner";
 import { format } from "date-fns";
+import useMovies from "../hooks/useMovies";
+import Search from "./Search";
+import movieShortOverview from "../app/utils/movieShortOverview";
+import { Pagination, Tag } from "antd";
 
 type Movie = {
   id: number;
   title: string;
-  release_date: string;
+  release_date: number;
   overview: string;
   poster_path: string | null;
   genre_ids: number[];
@@ -15,10 +19,9 @@ type Genre = {
   name: string;
   id: number;
 };
-import useMovies from "../hooks/useMovies";
-import Search from "./Search";
 export default function Movie() {
-  const { movies, isLoading } = useMovies();
+  const { movies, isLoading, currentPage, totalPages, setCurrentPage } =
+    useMovies();
 
   const genres: Genre[] = [
     {
@@ -121,23 +124,39 @@ export default function Movie() {
 
             <div className="movie-options">
               <h3 className="movie-title">{movie.title}</h3>
-              <span>{format(movie.release_date, "MMMM dd, yyyy")}</span>
+              <span>
+                {movie.release_date
+                  ? format(movie.release_date, "MMMM dd, yyyy")
+                  : "Release date unavailable"}
+              </span>
               <span>
                 {movie.genre_ids.map((genreId) => {
                   const genre = genres.find((genre) => genre.id === genreId);
 
                   return (
-                    <span className="movie-genre" key={genreId}>
+                    <Tag className="movie-genre" key={genreId}>
                       {genre?.name ?? "Unknown genre"}
-                    </span>
+                    </Tag>
                   );
                 })}
               </span>
-              <div className="line-clamp-5">{movie.overview}</div>
+
+              <div>
+                {movie.overview
+                  ? movieShortOverview(movie.overview)
+                  : "Movie overview unavailable"}
+              </div>
             </div>
           </li>
         ))}
       </ul>
+      <Pagination
+        className="pagination"
+        current={currentPage}
+        total={totalPages}
+        pageSize={20}
+        onChange={(page) => setCurrentPage(page)}
+      />
     </main>
   );
 }
