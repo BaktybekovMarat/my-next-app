@@ -7,7 +7,7 @@ export default function useMovies() {
 
   useEffect(() => {
     const loadMovie = async () => {
-      const response = await fetch("/api/movies");
+      const response = await fetch(`/api/movies?query=return`);
 
       if (!response.ok) {
         throw new Error("Error happened" + response.status);
