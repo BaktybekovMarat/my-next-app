@@ -1,9 +1,8 @@
-import Movie from "../components/Movies";
-
+import MoviePage from "../components/MoviePage";
 export default function Home() {
   return (
     <>
-      <Movie></Movie>
+      <MoviePage></MoviePage>
     </>
   );
 }

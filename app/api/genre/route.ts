@@ -1,19 +1,15 @@
 const token = process.env.TMDB_TOKEN;
 
-export async function GET(request: Request) {
+export async function GET() {
   if (!token) {
     return Response.json(
       { error: "TMDB token is not configured" },
       { status: 500 },
     );
   }
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get("query");
-  const page = searchParams.get("page");
-
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query ?? "")}&page=${page ?? 1}`,
+      `https://api.themoviedb.org/3/genre/movie/list?language=en`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -29,10 +25,10 @@ export async function GET(request: Request) {
     const result = await response.json();
     return Response.json(result);
   } catch (error) {
-    console.error("Failed to load movies:", error);
+    console.error("Failed to load genres:", error);
 
     return Response.json(
-      { error: "Failed to load movies. Please try again later." },
+      { error: "Failed to load genres. Please try again later." },
       { status: 500 },
     );
   }

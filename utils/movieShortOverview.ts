@@ -1,5 +1,5 @@
 "use client";
-export default function movieShortOverview(overview: string, maxLength = 200) {
+export default function movieShortOverview(overview: string, maxLength = 150) {
   if (overview.length < maxLength) {
     return overview;
   }

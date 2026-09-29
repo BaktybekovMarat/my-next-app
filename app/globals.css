@@ -12,6 +12,7 @@ body {
 main {
   background-color: #ffffff;
   width: 1010px;
+  padding: 10px 0;
   margin: 0 auto;
 }
 .movies-container {
@@ -41,24 +42,28 @@ main {
   padding: 10px;
   display: flex;
   flex-direction: column;
+  position: relative;
   & .movie-title {
+    margin-top: 10px;
     color: #000000;
-    font-size: 20px;
+    font-weight: 400;
     line-height: 28px;
     letter-spacing: 0%;
     vertical-align: middle;
   }
-  & span {
+  & .movie-date {
     color: #827e7e;
     font-size: 12px;
     line-height: 22px;
     letter-spacing: 0px;
     vertical-align: middle;
   }
-  & .movie-genre {
+  & .movie-tags {
+    color: #000000a6;
+    border: 1px solid #d9d9d9;
     margin: 1px 4px 1px 0px;
   }
-  & div {
+  & .movie-overview {
     color: #000000;
     font-size: 12px;
     line-height: 22px;
@@ -76,7 +81,7 @@ main {
     font-size: 20px;
   }
 }
-.search-container {
+.search-input {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,10 +92,67 @@ main {
     height: 40px;
     padding: 2px;
     border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 0 10px;
   }
 }
+.search-container {
+  padding: 0 40px;
+  margin: 5px;
+  & .search-list {
+    display: flex;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    text-decoration: underline;
+  }
+  & .movie-title {
+    margin: 0 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 10px 0;
+}
+.alert {
+  position: fixed;
+  text-align: center;
+  inset: 0;
+  font-size: 50;
+}
+.rate {
+  margin: auto 2px 5px 2px;
+}
+.SearchRated {
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  gap: 20px;
+  color: #000000;
+  & .active {
+    color: #1890ff;
+    text-decoration: underline;
+    text-decoration-color: #1890ff;
+  }
+}
+.ratingBall {
+  font-size: 12px;
+  color: #000000;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  border-radius: 50%;
+  border: 2px solid #e9d100;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  margin: 2px;
+  padding-top: 2px;
 }
