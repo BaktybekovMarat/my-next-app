@@ -9,12 +9,12 @@ type Genres = {
 
 export default function useGenres() {
   const [genres, setGenres] = useState<Genres[]>([]);
-  const [genreError, setGenreError] = useState("");
-  const [genreLoading, setGenreLoading] = useState(true);
+  const [genresError, setGenresError] = useState("");
+  const [genresLoading, setGenresLoading] = useState(true);
   useEffect(() => {
     const loadMovie = async () => {
-      setGenreError("");
-      setGenreLoading(true);
+      setGenresError("");
+      setGenresLoading(true);
       try {
         const response = await fetch(`/api/genre`);
         if (!response.ok) {
@@ -22,18 +22,16 @@ export default function useGenres() {
             response.status,
             "useGenres",
           );
-          setGenreError(responseStatusCheck);
+          setGenresError(responseStatusCheck);
           return;
         }
         const result = await response.json();
         setGenres(result.genres);
       } catch (error) {
         console.error(error);
-        if (!navigator.onLine) {
-          setGenreError("No internet connection");
-        } else setGenreError("Failed to load movies");
+        setGenresError("Failed to load genres");
       } finally {
-        setGenreLoading(false);
+        setGenresLoading(false);
       }
     };
 
@@ -41,8 +39,8 @@ export default function useGenres() {
   }, []);
 
   return {
-    genreLoading,
+    genresLoading,
     genres,
-    genreError,
+    genresError,
   };
 }

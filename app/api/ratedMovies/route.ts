@@ -33,8 +33,12 @@ export async function GET() {
       },
     );
     if (!response.ok) {
+      const detailedError = await response.json();
+      if (response.status === 404 && detailedError.status_code === 34) {
+        return Response.json({ results: [] }, { status: 200 });
+      }
       return Response.json(
-        { error: `Error happened ${response.status}` },
+        { error: `Error happened  ${response.status}` },
         { status: response.status },
       );
     }

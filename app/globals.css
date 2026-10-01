@@ -120,12 +120,13 @@ main {
   margin: 10px 0;
 }
 .alert {
-  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  inset: 0;
-  font-size: 50;
+  margin: auto;
 }
-.rate {
+.movie-rate {
   margin: auto 2px 5px 2px;
 }
 .SearchRated {

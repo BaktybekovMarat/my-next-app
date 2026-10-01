@@ -3,6 +3,8 @@ import { useState, useRef } from "react";
 import ErrorAlert from "./ErrorAlert";
 import Image from "next/image";
 import { Spin } from "antd";
+import checkErrorStatus from "@/utils/checkErrorStatus";
+
 interface Movies {
   id: number;
   title: string;
@@ -18,6 +20,7 @@ export default function Search() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputQuery, setInputQuery] = useState("");
+
   const searchMovie = async (
     event: React.ChangeEvent<HTMLInputElement>,
     debounceTimer = 500,
@@ -25,25 +28,33 @@ export default function Search() {
     const query = event.currentTarget.value.trim();
     setInputQuery(query);
 
-    if (clearTimer.current !== null) clearTimeout(clearTimer.current);
-
-    clearTimer.current = setTimeout(async () => {
+    try {
       setLoading(true);
-      const response = await fetch(`/api/movies?query=${query}`);
+      if (clearTimer.current !== null) clearTimeout(clearTimer.current);
+      clearTimer.current = setTimeout(async () => {
+        const response = await fetch(`/api/movies?query=${query}`);
 
-      if (!response.ok) {
-        setError(`Search failed ${response.status}`);
-        throw new Error("Error happened" + response.status);
-      }
-      const result = await response.json();
+        if (!response.ok) {
+          const responseStatusCheck = checkErrorStatus(
+            response.status,
+            "Search",
+          );
+          setError(`Search failed ${responseStatusCheck}`);
+        }
+        const result = await response.json();
 
-      setMovie(result.results);
+        setMovie(result.results);
+      }, debounceTimer);
+    } catch (error) {
+      console.error(error);
+      setError("Failed to search movies");
+    } finally {
       setLoading(false);
-    }, debounceTimer);
+    }
   };
-
-  return error ? (
-    <ErrorAlert type="error" title={error}></ErrorAlert>
+  const errors = error;
+  return errors ? (
+    <ErrorAlert type="error" title={errors}></ErrorAlert>
   ) : (
     <>
       <div className="search-input">

@@ -21,9 +21,7 @@ export default function useCreateGuestSession() {
         console.log(result.success);
       } catch (error) {
         console.error(error);
-        if (!navigator.onLine) {
-          setError("No internet connection");
-        } else setError("Failed to load movies");
+        setError("Failed to create guest session");
       }
     };
     getSession();

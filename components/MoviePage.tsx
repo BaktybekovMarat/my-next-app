@@ -6,6 +6,8 @@ import LoadingSpinner from "./LoadingSpinner";
 import useMovies from "../hooks/useMovies";
 import { Pagination } from "antd";
 import Link from "next/link";
+import useOnlineStatus from "@/hooks/useOnlineStatus";
+import ErrorAlert from "./ErrorAlert";
 
 export default function MoviePage() {
   const {
@@ -14,13 +16,15 @@ export default function MoviePage() {
     setCurrentPage,
     totalResults,
     loading,
-    getMoviesError,
+    moviesError,
   } = useMovies();
+  const isConnected = useOnlineStatus();
 
   if (loading) return <LoadingSpinner />;
 
   return (
     <main>
+      {isConnected && <ErrorAlert type="error" title={isConnected} />}
       <div className="SearchRated">
         <Link className="Search active" href="/">
           Search
@@ -30,7 +34,7 @@ export default function MoviePage() {
         </Link>
       </div>
       <Search />
-      <MoviesCard movies={movies} getMoviesError={getMoviesError} />
+      <MoviesCard movies={movies} moviesError={moviesError} />
       <Pagination
         className="pagination"
         current={currentPage}

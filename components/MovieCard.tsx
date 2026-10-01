@@ -5,11 +5,12 @@ import { format } from "date-fns";
 import movieShortOverview from "../utils/movieShortOverview";
 import { Tag, Rate } from "antd";
 import ErrorAlert from "./ErrorAlert";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import checkErrorStatus from "@/utils/checkErrorStatus";
 import LoadingSpinner from "./LoadingSpinner";
 import useGenres from "../hooks/useGenres";
 import getRatingColor from "@/utils/getRatingColor";
+import useGetRatedMovies from "@/hooks/useGetRatedMovies";
 
 interface Movie {
   id: number;
@@ -19,63 +20,27 @@ interface Movie {
   poster_path: string | null;
   genre_ids: number[];
   vote_average: number;
+  rating: number;
 }
 type Props = {
   movies: Movie[];
-  getMoviesError: string;
+  moviesError: string;
 };
 
 type Ratings = {
   [movieId: number]: number;
 };
 
-export default function MovieCard({ movies, getMoviesError }: Props) {
+export default function MovieCard({ movies, moviesError }: Props) {
   const [ratings, setRatings] = useState<Ratings>({});
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const { genres, genreError, genreLoading } = useGenres();
-  useEffect(() => {
-    const loadMoviesRate = async () => {
-      setError("");
-      setLoading(true);
-      const promises = movies.map(async (movie) => {
-        try {
-          const response = await fetch(`/api/rateMovies?movieId=${movie.id}`);
-          if (!response.ok) {
-            const responseStatusCheck = checkErrorStatus(
-              response.status,
-              "LoadMoviesRate",
-            );
-            return setError(responseStatusCheck);
-          }
-          return await response.json();
-        } catch (error) {
-          console.error(error);
-          if (!navigator.onLine) {
-            return setError("No internet connection");
-          } else return setError("Failed to load movies");
-        } finally {
-          setLoading(false);
-        }
-      });
-      const promisesResult = await Promise.all(promises);
-
-      setRatings(
-        promisesResult
-          .filter((ratedMovies) => ratedMovies && ratedMovies.rated !== false)
-          .reduce<Ratings>((acc, filtered) => {
-            acc[filtered.id] = filtered.rated.value;
-            return acc;
-          }, {}),
-      );
-    };
-    loadMoviesRate();
-  }, [movies]);
-
-  if (loading || genreLoading) return <LoadingSpinner />;
+  const [loading, setLoading] = useState(false);
+  const { genres, genresError, genresLoading } = useGenres();
+  const { ratedMovies, ratedError, loadingRatedMovies } = useGetRatedMovies();
 
   const handleRating = async (movieRating: number, movieId: number) => {
     setError("");
+    setLoading(true);
     try {
       const response = await fetch(`/api/rateMovies`, {
         method: "POST",
@@ -103,13 +68,13 @@ export default function MovieCard({ movies, getMoviesError }: Props) {
       }));
     } catch (error) {
       console.error(error);
-      if (!navigator.onLine) {
-        return setError("No internet connection");
-      } else return setError("Failed to load movies");
+      setError("Failed to create rating");
+    } finally {
+      setLoading(false);
     }
   };
-
-  const errors = error || genreError || getMoviesError;
+  if (loading || genresLoading || loadingRatedMovies) return <LoadingSpinner />;
+  const errors = error || genresError || moviesError || ratedError;
   return errors ? (
     <ErrorAlert type="error" title={errors} />
   ) : (
@@ -160,10 +125,16 @@ export default function MovieCard({ movies, getMoviesError }: Props) {
             </div>
 
             <Rate
-              className="rate"
-              value={ratings[movie.id] ?? 0}
+              className="movie-rate"
+              value={
+                ratings[movie.id] ??
+                ratedMovies.find((ratedMovie) => ratedMovie.id === movie.id)
+                  ?.rating ??
+                0
+              }
               count={10}
               size="small"
+              allowClear={false}
               onChange={(movieRating) => handleRating(movieRating, movie.id)}
             />
           </div>

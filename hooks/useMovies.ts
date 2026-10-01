@@ -10,6 +10,7 @@ interface Movie {
   poster_path: string | null;
   genre_ids: number[];
   vote_average: number;
+  rating: number;
 }
 
 export default function useMovies() {
@@ -17,11 +18,11 @@ export default function useMovies() {
   const [loading, setLoading] = useState(true);
   const [totalResults, setTotalResults] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [getMoviesError, setGetMoviesError] = useState("");
+  const [moviesError, setMoviesError] = useState("");
 
   useEffect(() => {
     const loadMovie = async () => {
-      setGetMoviesError("");
+      setMoviesError("");
       setLoading(true);
       try {
         const response = await fetch(
@@ -32,7 +33,7 @@ export default function useMovies() {
             response.status,
             "useMovies",
           );
-          setGetMoviesError(responseStatusCheck);
+          setMoviesError(responseStatusCheck);
           return;
         }
         const result = await response.json();
@@ -41,9 +42,7 @@ export default function useMovies() {
         console.log(result.results);
       } catch (error) {
         console.error(error);
-        if (!navigator.onLine) {
-          setGetMoviesError("No internet connection");
-        } else setGetMoviesError("Failed to load movies");
+        setMoviesError("Failed to load movies");
       } finally {
         setLoading(false);
       }
@@ -59,6 +58,6 @@ export default function useMovies() {
     currentPage,
     setCurrentPage,
     loading,
-    getMoviesError,
+    moviesError,
   };
 }
